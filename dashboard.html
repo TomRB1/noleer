@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>F1 Racing Portal Dashboard</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet"/>
+    <style>
+        /* Estilos de Tailwind para consistencia */
+        html.dark, body { background-color: #221010; color: white; font-family: 'Space Grotesk', sans-serif; }
+        .driver-card { 
+            transition: transform 0.3s ease; 
+            background-image: linear-gradient(to right, rgba(0,0,0,0.5), rgba(0,0,0,0.3));
+        }
+        .driver-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 10px 15px rgba(242, 13, 13, 0.4); 
+        }
+    </style>
+</head>
+<body class="font-display">
+
+    <div class="container mx-auto p-6 pt-10">
+        <h1 class="text-4xl font-bold text-center mb-10 text-[#f20d0d]">Drivers Dashboard</h1>
+        <div id="drivers-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            </div>
+
+        <div class="text-center pt-10">
+            <button onclick="window.location.href='menu.html'" class="bg-white/10 text-white/80 py-2 px-6 rounded-lg hover:bg-white/20 transition-colors">
+                ← Back to Menu
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        
+        async function loadDrivers() {
+            try {
+                // Fetch de datos locales desde data.json
+                const response = await fetch('./data.json');
+                if (!response.ok) {
+                    throw new Error('Error al cargar data.json');
+                }
+                const data = await response.json();
+                
+                const driverListDiv = document.getElementById('drivers-list');
+                driverListDiv.innerHTML = ''; 
+
+                // Renderizar cada driver
+                data.drivers.forEach(driver => {
+                    const card = document.createElement('div');
+                    card.className = 'driver-card bg-black/50 p-5 rounded-xl border border-white/10 flex flex-col items-center';
+                    card.innerHTML = `
+                        <p class="text-5xl font-extrabold text-[#f20d0d] mb-4">${driver.code}</p>
+                        <h2 class="text-2xl font-bold mb-1">${driver.name}</h2>
+                        <p class="text-white/70 text-lg mb-3">${driver.team}</p>
+                        <p class="bg-white/10 text-xs py-1 px-3 rounded-full">${driver.country}</p>
+                    `;
+                    driverListDiv.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error al cargar la lista de drivers:", error);
+                document.getElementById('drivers-list').innerHTML = '<p class="text-center text-red-500">No se pudieron cargar los datos de los drivers. Asegúrate de que data.json existe.</p>';
+            }
+        }
+
+        loadDrivers();
+    </script>
+        <script type="module">
+    // 1. **DEBES REEMPLAZAR ESTA CONFIGURACIÓN CON LOS VALORES DE TU CONSOLA DE FIREBASE**
+    const firebaseConfig = {
+        apiKey: "TU_API_KEY_AQUI", 
+        authDomain: "TU_DOMINIO_AQUI", 
+        projectId: "TU_PROJECT_ID_AQUI",
+        // ... otros campos
+    };
+
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    // FUNCIÓN DE CONTROL DE ACCESO
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // Hay un usuario logueado. Chequeamos la verificación
+            if (user.emailVerified) {
+                console.log("Acceso concedido. Usuario verificado.");
+                // Si el usuario es verificado, el contenido de la página se muestra
+            } else {
+                // Si no está verificado, lo forzamos a salir y lo mandamos al login
+                alert("Tu cuenta no está verificada. Redirigiendo al Login.");
+                signOut(auth);
+                window.location.href = "index.html";
+            }
+        } else {
+            // No hay usuario logueado, redirigir al login
+            console.log("No hay sesión activa. Redirigiendo al Login.");
+            window.location.href = "index.html";
+        }
+    });
+
+</script>
+</body>
+</html>

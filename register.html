@@ -1,0 +1,163 @@
+
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 Register Screen</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f20d0d",
+            "background-light": "#f8f5f5",
+            "background-dark": "#221010",
+            "card-light": "#ffffff",
+            "card-dark": "#1a1a1a",
+            "text-light": "#1f2937",
+            "text-dark": "#f3f4f6",
+            "text-muted-light": "#6b7280",
+            "text-muted-dark": "#9ca3af",
+          },
+          fontFamily: {
+            sans: ['Space Grotesk', 'sans-serif'],
+          },
+          boxShadow: {
+            'xl-red': '0 20px 25px -5px rgba(242, 13, 13, 0.3), 0 10px 10px -5px rgba(242, 13, 13, 0.2)',
+          }
+        },
+      },
+    }
+</script>
+</head>
+<body class="dark bg-background-dark min-h-screen flex items-center justify-center p-4 font-sans">
+<div class="w-full max-w-sm">
+    <div class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-primary tracking-wider uppercase mb-1">F1 HUB</h1>
+        <p class="text-text-muted-dark">Únete a la parrilla.</p>
+    </div>
+
+    <div class="bg-card-dark p-8 rounded-2xl shadow-xl shadow-primary/20 border border-primary/30">
+        <h2 class="text-2xl font-bold text-text-dark mb-6">Registro</h2>
+        
+        <form id="registerForm" class="space-y-6">
+            <div>
+                <label for="email" class="block text-sm font-medium text-text-muted-dark mb-1">Email</label>
+                <input type="email" id="email" name="email" required class="w-full px-4 py-2 bg-background-dark border border-primary/20 rounded-lg text-text-dark focus:ring-primary focus:border-primary transition duration-200">
+            </div>
+            
+            <div>
+                <label for="password" class="block text-sm font-medium text-text-muted-dark mb-1">Contraseña (Mínimo 6 caracteres)</label>
+                <div class="relative">
+                    <input type="password" id="password" name="password" required class="w-full px-4 py-2 bg-background-dark border border-primary/20 rounded-lg text-text-dark focus:ring-primary focus:border-primary transition duration-200 pr-10">
+                    <span id="togglePasswordReg" class="material-symbols-outlined absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-text-muted-dark hover:text-primary">visibility</span>
+                </div>
+            </div>
+            
+            <button id="registerBtn" type="button" class="w-full py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/40 hover:bg-red-700 transition duration-300 transform hover:scale-[1.01] flex items-center justify-center">
+                <span class="truncate">REGISTRAR Y EMPEZAR</span>
+            </button>
+        </form>
+
+        <p class="mt-6 text-center text-sm text-text-muted-dark">
+            ¿Ya tienes cuenta? 
+            <a id="loginLink" href="#" class="text-primary font-semibold hover:underline transition duration-200">Inicia sesión aquí</a>
+        </p>
+    </div>
+</div>
+
+<script type="module">
+// 1. CONFIGURACIÓN REAL DE FIREBASE
+const firebaseConfig = {
+    apiKey: "AIzaSyCI5lOdyNV6intEbFy9BXPP-gcPDD3vQOY",
+    authDomain: "webmussetof1.firebaseapp.com",
+    projectId: "webmussetof1",
+    storageBucket: "webmussetof1.firebasestorage.app",
+    messagingSenderId: "461670115383",
+    appId: "1:461670115383:web:55a98857d6d620efd5b7b2",
+    measurementId: "G-03VLFQ4MVH"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 3. OBTENER ELEMENTOS DEL DOM
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+const registerBtn = document.getElementById("registerBtn");
+const loginLink = document.getElementById("loginLink");
+
+// 4. LÓGICA DE REGISTRO CON FIREBASE
+if (registerBtn) {
+    registerBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value.trim();
+
+        if (password.length < 6) {
+            alert("La contraseña debe tener al menos 6 caracteres.");
+            return;
+        }
+        if (!email) {
+            alert("Por favor, ingresa tu email.");
+            return;
+        }
+
+        try {
+            // 1. Crea el usuario
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // 2. Envía el email de verificación
+            await sendEmailVerification(user);
+            
+            // 3. Informa al usuario y redirige al Login
+            alert("¡Cuenta creada con éxito! Se ha enviado un correo de verificación. Por favor, verifica tu cuenta antes de iniciar sesión.");
+            window.location.href = "index.html"; 
+            
+        } catch (error) {
+            console.error("Error de registro:", error.code, error.message);
+            
+            let msg = "Ocurrió un error al registrar.";
+            if (error.code === 'auth/email-already-in-use') {
+                msg = "Este email ya está en uso. Intenta iniciar sesión.";
+            }
+            if (error.code === 'auth/weak-password') {
+                msg = "Contraseña muy débil. Debe tener al menos 6 caracteres.";
+            }
+            
+            alert(`Error de Registro: ${msg}`);
+        }
+    });
+}
+
+// 5. Redirigir al Login
+if (loginLink) {
+    loginLink.addEventListener("click", () => {
+        window.location.href = "index.html";
+    });
+}
+
+// 6. Lógica de Visibilidad de Contraseña
+const passwordInputReg = document.getElementById("password");
+const togglePasswordReg = document.getElementById("togglePasswordReg");
+
+if (passwordInputReg && togglePasswordReg) {
+    togglePasswordReg.addEventListener('click', function () {
+        const type = passwordInputReg.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInputReg.setAttribute('type', type);
+        this.textContent = (type === 'password' ? 'visibility' : 'visibility_off');
+    });
+}
+</script>
+</body>
+</html>

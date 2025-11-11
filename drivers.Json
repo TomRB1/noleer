@@ -1,0 +1,7 @@
+{
+  "standings": [
+    { "position": 1, "driver": "Lando Norris", "team": "McLaren", "points": 357 },
+    { "position": 2, "driver": "Oscar Piastri", "team": "McLaren", "points": 356 },
+    { "position": 3, "driver": "Max Verstappen", "team": "Red Bull Racing", "points": 321 }
+  ]
+}

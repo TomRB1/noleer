@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>F1 Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    h1, h2, h3, h4, h5, h6, .font-orbitron {
+        font-family: 'Orbitron', sans-serif;
+    }
+</style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f20d0d",
+            "background-light": "#f8f5f5",
+            "background-dark": "#0d1115",
+            "card-light": "#ffffff",
+            "card-dark": "#181a1f",
+            "text-light": "#1f2937",
+            "text-dark": "#f3f4f6",
+            "text-muted-light": "#6b7280",
+            "text-muted-dark": "#9ca3af",
+          },
+        },
+      },
+    }
+</script>
+</head>
+<body class="dark bg-background-dark min-h-screen p-6">
+
+    <header class="flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-orbitron font-extrabold text-primary tracking-wider">F1 HUB</h1>
+        <button id="logoutBtn" class="bg-card-dark text-text-muted-dark hover:text-primary transition duration-200 border border-primary/20 py-2 px-4 rounded-lg flex items-center shadow-lg hover:shadow-primary/20">
+            <span class="material-symbols-outlined text-lg mr-2">logout</span>
+            Logout
+        </button>
+    </header>
+
+    <main>
+        <h2 class="text-4xl font-orbitron font-bold text-text-dark mb-8">Bienvenido, Driver.</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            <!-- Opción Dashboard de Pilotos -->
+            <a id="driversBtn" href="#" class="group relative flex transform flex-col justify-between overflow-hidden rounded-xl bg-card-dark p-6 shadow-xl shadow-gray-900/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 border border-primary/20">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-3xl">local_gas_station</span>
+                    </div>
+                    <h3 class="mt-6 text-2xl font-bold text-text-dark font-orbitron">Dashboard de Pilotos</h3>
+                    <p class="mt-2 text-sm text-text-muted-dark">Explora estadísticas, equipos y la historia de cada driver en la parrilla.</p>
+                </div>
+
+                <div class="relative z-10 mt-6 flex items-center justify-end text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span class="text-sm font-semibold">Explorar</span>
+                    <span class="material-symbols-outlined ml-1">arrow_forward</span>
+                </div>
+            </a>
+
+            <!-- Opción Quiz F1 -->
+            <a id="quizzBtn" href="#" class="group relative flex transform flex-col justify-between overflow-hidden rounded-xl bg-card-dark p-6 shadow-xl shadow-gray-900/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary/30 border border-primary/20">
+                <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                        <span class="material-symbols-outlined text-3xl">quiz</span>
+                    </div>
+                    <h3 class="mt-6 text-2xl font-bold text-text-dark font-orbitron">F1 Quiz Game</h3>
+                    <p class="mt-2 text-sm text-text-muted-dark">Pon a prueba tus conocimientos y compite por el liderato.</p>
+                </div>
+
+                <div class="relative z-10 mt-6 flex items-center justify-end text-primary opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span class="text-sm font-semibold">Jugar</span>
+                    <span class="material-symbols-outlined ml-1">arrow_forward</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+<script type="module">
+// 1. CONFIGURACIÓN REAL DE FIREBASE
+const firebaseConfig = {
+    apiKey: "AIzaSyCI5lOdyNV6intEbFy9BXPP-gcPDD3vQOY",
+    authDomain: "webmussetof1.firebaseapp.com",
+    projectId: "webmussetof1",
+    storageBucket: "webmussetof1.firebasestorage.app",
+    messagingSenderId: "461670115383",
+    appId: "1:461670115383:web:55a98857d6d620efd5b7b2",
+    measurementId: "G-03VLFQ4MVH"
+};
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+
+// Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// OBTENER BOTONES
+const logoutBtn = document.getElementById("logoutBtn");
+const quizzBtn = document.getElementById("quizzBtn");
+const driversBtn = document.getElementById("driversBtn");
+
+// 2. FUNCIÓN DE CONTROL DE ACCESO (Muro de Seguridad)
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // Hay un usuario logueado. Chequeamos la verificación de email
+        if (user.emailVerified) {
+            console.log("Acceso concedido. Usuario verificado.");
+        } else {
+            // Si no está verificado, forzamos la salida y lo mandamos al login
+            alert("Tu cuenta no está verificada. Revisa tu email. Redirigiendo al Login.");
+            signOut(auth);
+            window.location.href = "index.html";
+        }
+    } else {
+        // No hay usuario logueado, redirigir al login
+        console.log("No hay sesión activa. Redirigiendo al Login.");
+        window.location.href = "index.html";
+    }
+});
+
+// 3. LÓGICA DE LOGOUT
+if (logoutBtn) {
+    logoutBtn.addEventListener("click", async () => {
+        try {
+            await signOut(auth);
+            // La redirección a index.html ocurre automáticamente por onAuthStateChanged
+            alert("Sesión cerrada correctamente.");
+        } catch (error) {
+            console.error("Error al cerrar sesión:", error);
+            alert("Error al cerrar sesión.");
+        }
+    });
+}
+
+// 4. LÓGICA DE REDIRECCIÓN A MENÚS
+if (quizzBtn) {
+    quizzBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "quiz.html";
+    });
+}
+
+if (driversBtn) {
+    driversBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = "dashboard.html"; // Asumo que el archivo se llama dashboard.html
+    });
+}
+</script>
+</body>
+</html>
